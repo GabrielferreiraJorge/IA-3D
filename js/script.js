@@ -60,17 +60,31 @@ function respostaSelecionada(opcaoSelecionada){
     mostraPergunta();
 }
 
-function mostraResultado(){
+function mostraResultado() {
     caixaPerguntas.textContent = `Em 2049, ${nome}`;
     textoResultado.textContent = historiaFinal;
     caixaAlternativas.textContent = "";
     caixaResultado.classList.add("mostrar");
+
     botaoJogarNovamente.addEventListener("click", jogarNovamente);
+    
+    const botaoSair = document.querySelector(".sair-btn"); // Seleciona o botão Sair
+    botaoSair.addEventListener("click", sairJogo); // Adiciona o evento de clique
 }
+
 
 function jogarNovamente() {
     atual = 0;
     historiaFinal = "";
     caixaResultado.classList.remove("mostrar");
     mostraPergunta();
+}
+
+function sairJogo() {
+    atual = 0;
+    historiaFinal = "";
+    telaInicial.style.display = 'block'; // Mostra a tela inicial
+    caixaPerguntas.classList.remove("mostrar");
+    caixaAlternativas.classList.remove("mostrar");
+    caixaResultado.classList.remove("mostrar");
 }
