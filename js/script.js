@@ -1,4 +1,4 @@
-import { aleatorio, nome } from './aleatorio.js';
+import { aleatorio, gerarNomeAleatorio } from './aleatorio.js';
 import { perguntas } from './perguntas.js';
 
 const caixaPrincipal = document.querySelector(".caixa-principal");
@@ -10,63 +10,67 @@ const botaoJogarNovamente = document.querySelector(".novamente-btn");
 const botaoIniciar = document.querySelector(".iniciar-btn");
 const telaInicial = document.querySelector(".tela-inicial");
 
-let perguntaAtualIndex = 0;
+let atual = 0; 
+let perguntaAtual;
 let historiaFinal = "";
+let nome = gerarNomeAleatorio();  // Gera um nome aleatório ao iniciar
 
-// Inicializa o jogo
 botaoIniciar.addEventListener('click', iniciaJogo);
 
 function iniciaJogo() {
-    perguntaAtualIndex = 0;
+    atual = 0;
     historiaFinal = "";
+    nome = gerarNomeAleatorio();  // Gera um novo nome aleatório ao reiniciar o jogo
     telaInicial.style.display = 'none';
-    caixaResultado.classList.remove("mostrar");
+    caixaPerguntas.classList.remove(".mostrar");
+    caixaAlternativas.classList.remove(".mostrar");
+    caixaResultado.classList.remove(".mostrar");
     mostraPergunta();
 }
 
 function mostraPergunta() {
-    if (perguntaAtualIndex >= perguntas.length) {
+    if(atual >= perguntas.length){
         mostraResultado();
         return;
     }
-
-    const perguntaAtual = perguntas[perguntaAtualIndex];
+    perguntaAtual = perguntas[atual];
     caixaPerguntas.textContent = perguntaAtual.enunciado;
-    caixaAlternativas.innerHTML = ""; // Limpa alternativas anteriores
-
-    perguntaAtual.alternativas.forEach((alternativa, index) => {
-        const botaoAlternativa = document.createElement("button");
-        botaoAlternativa.textContent = alternativa.texto;
-        botaoAlternativa.addEventListener("click", () => respostaSelecionada(alternativa));
-        caixaAlternativas.appendChild(botaoAlternativa);
-    });
+    caixaAlternativas.textContent = "";
+    mostraAlternativas();
 }
 
-function respostaSelecionada(alternativa) {
-    const afirmacaoAleatoria = aleatorio(alternativa.afirmacao);
-    historiaFinal += afirmacaoAleatoria + " ";
-
-    if (alternativa.proxima !== undefined) {
-        perguntaAtualIndex = alternativa.proxima;
-        mostraPergunta();
-    } else {
-        mostraResultado();
+function mostraAlternativas(){
+    for(const alternativa of perguntaAtual.alternativas){
+        const botaoAlternativas = document.createElement("button");
+        botaoAlternativas.textContent = alternativa.texto;
+        botaoAlternativas.addEventListener("click", () => respostaSelecionada(alternativa));
+        caixaAlternativas.appendChild(botaoAlternativas);
     }
 }
 
-function mostraResultado() {
+function respostaSelecionada(opcaoSelecionada){
+    const afirmacoes = aleatorio(opcaoSelecionada.afirmacao);
+    historiaFinal += afirmacoes + " ";
+    if(opcaoSelecionada.proxima !== undefined) {
+        atual = opcaoSelecionada.proxima;
+    } else {
+        mostraResultado();
+        return;
+    }   
+    mostraPergunta();
+}
+
+function mostraResultado(){
     caixaPerguntas.textContent = `Em 2049, ${nome}`;
     textoResultado.textContent = historiaFinal;
-    caixaAlternativas.innerHTML = "";
+    caixaAlternativas.textContent = "";
     caixaResultado.classList.add("mostrar");
+    botaoJogarNovamente.addEventListener("click", jogarNovamente);
 }
 
-botaoJogarNovamente.addEventListener("click", iniciaJogo);
-
-function substituiNome() {
-    perguntas.forEach(pergunta => {
-        pergunta.enunciado = pergunta.enunciado.replace(/você/g, nome);
-    });
+function jogarNovamente() {
+    atual = 0;
+    historiaFinal = "";
+    caixaResultado.classList.remove("mostrar");
+    mostraPergunta();
 }
-
-substituiNome();
