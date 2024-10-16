@@ -1,50 +1,66 @@
 @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-:root{
+:root {
     --cor-fundo: #d4e3f2;
-    --cor-principal: #636890 ;
-    --cor-secundaria: #212333; 
+    --cor-principal: #636890;
+    --cor-secundaria: #212333;
     --cor-destaque: #2BDEFD;
     --cor-texto: #D7F9FF;
-
+    --cor-sombra: rgba(0, 0, 0, 0.1);
+    --raio-borda: 10px;
+    --transicao: 0.3s ease;
 }
 
 body {
     background-color: var(--cor-fundo);
     color: var(--cor-texto);
-    font-family: 'Inter', sans-serif; /*add 11/09*/
+    font-family: 'Inter', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    margin: 0;
 }
 
-.caixa-principal{
+.caixa-principal {
     background-color: var(--cor-principal);
     width: 90%;
     max-width: 600px;
     text-align: center;
     padding: 20px;
+    border-radius: var(--raio-borda);
+    box-shadow: 0 4px 15px var(--cor-sombra);
+    margin: 20px;
+    transition: transform var(--transicao);
 }
-/*add 11/09*/
-h1, .caixa-perguntas, .caixa-resultado{
+
+.caixa-principal:hover {
+    transform: scale(1.02);
+}
+
+/* Adicionando fonte diferenciada para títulos e perguntas */
+h1, .caixa-perguntas, .caixa-resultado {
     font-family: 'Chakra Petch', sans-serif;
 }
 
-h1{
+h1 {
     color: var(--cor-destaque);
+    margin-bottom: 20px;
 }
 
 button {
     background-color: var(--cor-secundaria);
     color: var(--cor-texto);
     border: none;
-    border-radius: 15px;
+    border-radius: var(--raio-borda);
     padding: 15px;
-    transition: background-color 0.3s;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color var(--transicao), color var(--transicao);
+    box-shadow: 0 4px 10px var(--cor-sombra);
 }
 
-button:hover{
+button:hover {
     background-color: var(--cor-destaque);
     color: var(--cor-principal);
 }
@@ -53,12 +69,58 @@ button:hover{
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin: 20px 0;
+}
+
+.caixa-perguntas {
+    margin-bottom: 20px;
+    font-size: 18px;
 }
 
 .caixa-resultado {
     display: none;
+    padding: 20px;
+    background-color: var(--cor-secundaria);
+    border-radius: var(--raio-borda);
+    box-shadow: 0 4px 15px var(--cor-sombra);
 }
 
 .caixa-resultado.mostrar {
     display: block;
+}
+
+.texto-resultado {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.novamente-btn, .sair-btn {
+    width: 100%;
+    margin-top: 10px;
+    font-size: 16px;
+    padding: 12px;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 600px) {
+    button {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .caixa-principal {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    .caixa-perguntas {
+        font-size: 16px;
+    }
+
+    .texto-resultado {
+        font-size: 16px;
+    }
 }
