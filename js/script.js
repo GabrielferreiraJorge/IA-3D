@@ -1,5 +1,5 @@
-import {aleatorio, nome} from './aleatorio.js';
-import {perguntas} from './perguntas.js';
+import { aleatorio, nome } from './aleatorio.js';
+import { perguntas } from './perguntas.js';
 
 const caixaPrincipal = document.querySelector(".caixa-principal");
 const caixaPerguntas = document.querySelector(".caixa-perguntas");
@@ -10,73 +10,63 @@ const botaoJogarNovamente = document.querySelector(".novamente-btn");
 const botaoIniciar = document.querySelector(".iniciar-btn");
 const telaInicial = document.querySelector(".tela-inicial");
 
-let atual = 0; 
-let perguntaAtual;
+let perguntaAtualIndex = 0;
 let historiaFinal = "";
 
+// Inicializa o jogo
 botaoIniciar.addEventListener('click', iniciaJogo);
 
 function iniciaJogo() {
-    atual = 0;
+    perguntaAtualIndex = 0;
     historiaFinal = "";
     telaInicial.style.display = 'none';
-    caixaPerguntas.classList.remove(".mostrar");
-    caixaAlternativas.classList.remove(".mostrar");
-    caixaResultado.classList.remove(".mostrar");
-    mostraPergunta();
-}
-
-function mostraPergunta() {
-    if(atual >= perguntas.length){
-        mostraResultado();
-        return;
-    }
-    perguntaAtual = perguntas[atual];
-    caixaPerguntas.textContent = perguntaAtual.enunciado;
-    caixaAlternativas.textContent = "";
-    mostraAlternativas();
-}
-
-function mostraAlternativas(){
-    for(const alternativa of perguntaAtual.alternativas){
-        const botaoAlternativas = document.createElement("button");
-        botaoAlternativas.textContent = alternativa.texto;
-        botaoAlternativas.addEventListener("click", () => respostaSelecionada(alternativa));
-        caixaAlternativas.appendChild(botaoAlternativas);
-    }
-}
-
-function respostaSelecionada(opcaoSelecionada){
-    const afirmacoes = aleatorio(opcaoSelecionada.afirmacao);
-    historiaFinal += afirmacoes + " ";
-    if(opcaoSelecionada.proxima !== undefined) {
-        atual = opcaoSelecionada.proxima;
-    }else {
-        mostraResultado();
-        return;
-    }   
-    mostraPergunta();
-}
-
-function mostraResultado(){
-    caixaPerguntas.textContent = `Em 2049, ${nome}`;
-    textoResultado.textContent = historiaFinal;
-    caixaAlternativas.textContent = "";
-    caixaResultado.classList.add("mostrar");
-    botaoJogarNovamente.addEventListener("click", jogarNovamente);
-}
-
-function jogarNovamente() {
-    atual = 0;
-    historiaFinal = "";
     caixaResultado.classList.remove("mostrar");
     mostraPergunta();
 }
 
-function substituiNome() {
-    for (const pergunta of perguntas) {
-        pergunta.enunciado = pergunta.enunciado.replace(/você/g, nome);
+function mostraPergunta() {
+    if (perguntaAtualIndex >= perguntas.length) {
+        mostraResultado();
+        return;
     }
+
+    const perguntaAtual = perguntas[perguntaAtualIndex];
+    caixaPerguntas.textContent = perguntaAtual.enunciado;
+    caixaAlternativas.innerHTML = ""; // Limpa alternativas anteriores
+
+    perguntaAtual.alternativas.forEach((alternativa, index) => {
+        const botaoAlternativa = document.createElement("button");
+        botaoAlternativa.textContent = alternativa.texto;
+        botaoAlternativa.addEventListener("click", () => respostaSelecionada(alternativa));
+        caixaAlternativas.appendChild(botaoAlternativa);
+    });
+}
+
+function respostaSelecionada(alternativa) {
+    const afirmacaoAleatoria = aleatorio(alternativa.afirmacao);
+    historiaFinal += afirmacaoAleatoria + " ";
+
+    if (alternativa.proxima !== undefined) {
+        perguntaAtualIndex = alternativa.proxima;
+        mostraPergunta();
+    } else {
+        mostraResultado();
+    }
+}
+
+function mostraResultado() {
+    caixaPerguntas.textContent = `Em 2049, ${nome}`;
+    textoResultado.textContent = historiaFinal;
+    caixaAlternativas.innerHTML = "";
+    caixaResultado.classList.add("mostrar");
+}
+
+botaoJogarNovamente.addEventListener("click", iniciaJogo);
+
+function substituiNome() {
+    perguntas.forEach(pergunta => {
+        pergunta.enunciado = pergunta.enunciado.replace(/você/g, nome);
+    });
 }
 
 substituiNome();
